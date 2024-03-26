@@ -14,7 +14,7 @@ public class SSHResult<T> {
 
     private String fun;
     @SerializedName("fun_args")
-    private List<String> funArgs;
+    private List<Object> funArgs;
     private String id;
     private String jid;
     private int retcode;
@@ -27,7 +27,7 @@ public class SSHResult<T> {
         return fun;
     }
 
-    public List<String> getFunArgs() {
+    public List<Object> getFunArgs() {
         return funArgs;
     }
 
