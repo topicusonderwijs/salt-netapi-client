@@ -15,6 +15,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -24,7 +25,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
     private final ConstructorConstructor constructorConstructor;
 
     public CollectionTypeAdapterFactory() {
-        this.constructorConstructor = new ConstructorConstructor(new HashMap<>());
+        this.constructorConstructor = new ConstructorConstructor(new HashMap<>(), true, Collections.emptyList());
     }
 
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
