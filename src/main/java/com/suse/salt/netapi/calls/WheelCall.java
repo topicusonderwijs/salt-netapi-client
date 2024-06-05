@@ -53,14 +53,18 @@ public class WheelCall<R> extends AbstractCall<R> {
      * @return information about the scheduled job
      */
     public CompletionStage<WheelAsyncResult<R>> callAsync(final SaltClient client, AuthMethod auth) {
-        return client.call(
-                this, Client.WHEEL_ASYNC, Optional.empty(), Collections.emptyMap(),
-                new TypeToken<Return<List<WheelAsyncResult<R>>>>(){}, auth)
-                .thenApply(wrapper -> {
-                    WheelAsyncResult<R> result = wrapper.getResult().get(0);
-                    result.setType(getReturnType());
-                    return result;
-                });
+		@SuppressWarnings("unchecked")
+		TypeToken<Return<List<WheelAsyncResult<R>>>> typeToken = (TypeToken<Return<List<WheelAsyncResult<R>>>>) TypeToken
+				.getParameterized(Return.class, TypeToken
+						.getParameterized(List.class,
+								TypeToken.getParameterized(WheelAsyncResult.class, getReturnType().getType()).getType())
+						.getType());
+		return client.call(this, Client.WHEEL_ASYNC, Optional.empty(), Collections.emptyMap(), typeToken, auth)
+				.thenApply(wrapper -> {
+					WheelAsyncResult<R> result = wrapper.getResult().get(0);
+					result.setType(getReturnType());
+					return result;
+				});
     }
 
     /**

@@ -53,13 +53,19 @@ public class RunnerCall<R> extends AbstractCall<R> {
      * @return information about the scheduled job
      */
     public CompletionStage<RunnerAsyncResult<R>> callAsync(final SaltClient client, AuthMethod auth) {
-        return client.call(this, Client.RUNNER_ASYNC, Optional.empty(), Collections.emptyMap(),
-                new TypeToken<Return<List<RunnerAsyncResult<R>>>>(){}, auth)
-                .thenApply(wrapper -> {
-                    RunnerAsyncResult<R> result = wrapper.getResult().get(0);
-                    result.setType(getReturnType());
-                    return result;
-                });
+		@SuppressWarnings("unchecked")
+		TypeToken<Return<List<RunnerAsyncResult<R>>>> typeToken = (TypeToken<Return<List<RunnerAsyncResult<R>>>>) TypeToken
+				.getParameterized(Return.class,
+						TypeToken
+								.getParameterized(List.class, TypeToken
+										.getParameterized(RunnerAsyncResult.class, getReturnType().getType()).getType())
+								.getType());
+		return client.call(this, Client.RUNNER_ASYNC, Optional.empty(), Collections.emptyMap(), typeToken, auth)
+				.thenApply(wrapper -> {
+					RunnerAsyncResult<R> result = wrapper.getResult().get(0);
+					result.setType(getReturnType());
+					return result;
+				});
     }
 
     /**
